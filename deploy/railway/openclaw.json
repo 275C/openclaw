@@ -6,7 +6,7 @@
   "agents": {
     "defaults": {
       "model": {
-        "primary": "openrouter/auto"
+        "primary": "openrouter/deepseek/deepseek-v4-pro"
       }
     }
   },

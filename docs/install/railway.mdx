@@ -69,12 +69,12 @@ Set these variables on the service:
 - `OPENCLAW_CONFIG_PATH=/app/deploy/railway/openclaw.json`
 
 <Tip>
-  The bundled config at `deploy/railway/openclaw.json` sets `agents.defaults.model.primary` to
-  `openrouter/auto` so agents use OpenRouter by default, `gateway.controlUi.trustTokenAuth: true` to
-  skip manual device pairing when the gateway token/password is provided, and
-  `gateway.trustedProxies` for the Railway network. Set `OPENROUTER_API_KEY` in your Railway service
-  variables. If you use a custom domain, edit that file or create your own config with the correct
-  origin.
+  The bundled config at `deploy/railway/openclaw.json` pins `agents.defaults.model.primary` to
+  `openrouter/deepseek/deepseek-v4-pro` (DeepSeek V4 Pro via OpenRouter),
+  `gateway.controlUi.trustTokenAuth: true` to skip manual device pairing when the gateway
+  token/password is provided, and `gateway.trustedProxies` for the Railway network. Set
+  `OPENROUTER_API_KEY` in your Railway service variables. If you use a custom domain, edit that file
+  or create your own config with the correct origin.
 </Tip>
 
 ## Connect a channel
