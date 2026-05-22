@@ -67,6 +67,14 @@ Set these variables on the service:
 - `OPENCLAW_WORKSPACE_DIR=/data/workspace` (recommended)
 - `OPENCLAW_CONFIG_PATH=/app/deploy/railway/openclaw.json`
 
+<Tip>
+  The bundled config at `deploy/railway/openclaw.json` sets `gateway.controlUi.allowedOrigins`,
+  `gateway.controlUi.trustTokenAuth: true`, and `gateway.trustedProxies` for the default Railway
+  domain. With `trustTokenAuth`, the Control UI skips manual device pairing when the gateway
+  token/password is provided — no CLI approval needed. If you use a custom domain, edit that file or
+  create your own config with the correct origin.
+</Tip>
+
 ## Connect a channel
 
 Use the Control UI at `/openclaw` or run `openclaw onboard` via Railway's shell for channel setup instructions:

@@ -4,7 +4,8 @@
     "controlUi": {
       "allowedOrigins": [
         "https://openclaw-stagingopenclaw.up.railway.app"
-      ]
+      ],
+      "trustTokenAuth": true
     },
     "trustedProxies": [
       "100.64.0.0/10"

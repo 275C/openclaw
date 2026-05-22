@@ -373,6 +373,141 @@ describe("ws connect policy", () => {
     }
   });
 
+  test("trustTokenAuth skips pairing for operator control-ui with token/password auth", () => {
+    // trustTokenAuth enabled, token auth, operator role -> skip pairing
+    const trustTokenAuth = resolveControlUiAuthPolicy({
+      isControlUi: true,
+      controlUiConfig: { trustTokenAuth: true },
+      deviceRaw: null,
+    });
+    expect(shouldSkipControlUiPairing(trustTokenAuth, "operator", false, "token")).toBe(true);
+    expect(shouldSkipControlUiPairing(trustTokenAuth, "operator", false, "password")).toBe(true);
+
+    // trustTokenAuth enabled, token auth, node role -> still require pairing
+    expect(shouldSkipControlUiPairing(trustTokenAuth, "node", false, "token")).toBe(false);
+
+    // trustTokenAuth enabled, no auth mode -> still require pairing
+    expect(shouldSkipControlUiPairing(trustTokenAuth, "operator", false)).toBe(false);
+
+    // trustTokenAuth enabled, auth.mode=none -> still require pairing
+    // (auth.mode=none is handled by the separate authMode check)
+    expect(shouldSkipControlUiPairing(trustTokenAuth, "operator", false, "none")).toBe(true);
+
+    // trustTokenAuth disabled, token auth, operator role -> still require pairing
+    const strict = resolveControlUiAuthPolicy({
+      isControlUi: true,
+      controlUiConfig: undefined,
+      deviceRaw: null,
+    });
+    expect(shouldSkipControlUiPairing(strict, "operator", false, "token")).toBe(false);
+
+    // trustTokenAuth disabled, password auth, operator role -> still require pairing
+    expect(shouldSkipControlUiPairing(strict, "operator", false, "password")).toBe(false);
+
+    // Non-Control-UI with trustTokenAuth -> still require pairing
+    const nonControlUiTrust = resolveControlUiAuthPolicy({
+      isControlUi: false,
+      controlUiConfig: { trustTokenAuth: true },
+      deviceRaw: null,
+    });
+    expect(shouldSkipControlUiPairing(nonControlUiTrust, "operator", false, "token")).toBe(false);
+  });
+
+  test("trustTokenAuth in evaluateMissingDeviceIdentity", () => {
+    const trustTokenAuthPolicy = resolveControlUiAuthPolicy({
+      isControlUi: true,
+      controlUiConfig: { trustTokenAuth: true },
+      deviceRaw: null,
+    });
+    const strictPolicy = resolveControlUiAuthPolicy({
+      isControlUi: true,
+      controlUiConfig: undefined,
+      deviceRaw: null,
+    });
+
+    // trustTokenAuth + valid shared auth + operator role -> allow
+    expect(
+      evaluateMissingDeviceIdentity({
+        hasDeviceIdentity: false,
+        role: "operator",
+        isControlUi: true,
+        controlUiAuthPolicy: trustTokenAuthPolicy,
+        trustedProxyAuthOk: false,
+        sharedAuthOk: true,
+        authOk: true,
+        hasSharedAuth: true,
+        isLocalClient: false,
+      }).kind,
+    ).toBe("allow");
+
+    // trustTokenAuth + invalid shared auth -> rejected (need valid auth)
+    expect(
+      evaluateMissingDeviceIdentity({
+        hasDeviceIdentity: false,
+        role: "operator",
+        isControlUi: true,
+        controlUiAuthPolicy: trustTokenAuthPolicy,
+        trustedProxyAuthOk: false,
+        sharedAuthOk: false,
+        authOk: false,
+        hasSharedAuth: false,
+        isLocalClient: false,
+      }).kind,
+    ).toBe("reject-control-ui-insecure-auth");
+
+    // trustTokenAuth + node role -> still reject (operator only)
+    // Falls through to Control UI check which rejects with "reject-control-ui-insecure-auth"
+    // since trustTokenAuth doesn't set allowBypass.
+    expect(
+      evaluateMissingDeviceIdentity({
+        hasDeviceIdentity: false,
+        role: "node",
+        isControlUi: true,
+        controlUiAuthPolicy: trustTokenAuthPolicy,
+        trustedProxyAuthOk: false,
+        sharedAuthOk: true,
+        authOk: true,
+        hasSharedAuth: true,
+        isLocalClient: false,
+      }).kind,
+    ).toBe("reject-control-ui-insecure-auth");
+
+    // trustTokenAuth disabled + valid token auth + operator -> still reject
+    expect(
+      evaluateMissingDeviceIdentity({
+        hasDeviceIdentity: false,
+        role: "operator",
+        isControlUi: true,
+        controlUiAuthPolicy: strictPolicy,
+        trustedProxyAuthOk: false,
+        sharedAuthOk: true,
+        authOk: true,
+        hasSharedAuth: true,
+        isLocalClient: false,
+      }).kind,
+    ).toBe("reject-control-ui-insecure-auth");
+
+    // Non-Control-UI with trustTokenAuth -> still reject
+    const nonControlUiTrust = resolveControlUiAuthPolicy({
+      isControlUi: false,
+      controlUiConfig: { trustTokenAuth: true },
+      deviceRaw: null,
+    });
+    expect(
+      evaluateMissingDeviceIdentity({
+        hasDeviceIdentity: false,
+        role: "operator",
+        isControlUi: false,
+        controlUiAuthPolicy: nonControlUiTrust,
+        trustedProxyAuthOk: false,
+        sharedAuthOk: true,
+        authOk: true,
+        hasSharedAuth: true,
+        isLocalClient: false,
+      }).kind,
+    ).toBe("allow"); // non-Control-UI with valid auth is allowed
+  });
+
   test("clears unbound scopes for device-less shared auth outside explicit preservation cases", () => {
     const nonControlUi = resolveControlUiAuthPolicy({
       isControlUi: false,

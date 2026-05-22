@@ -139,6 +139,14 @@ export type GatewayControlUiConfig = {
   allowInsecureAuth?: boolean;
   /** DANGEROUS: Disable device identity checks for the Control UI (default: false). */
   dangerouslyDisableDeviceAuth?: boolean;
+  /**
+   * Trust Control UI connections that present valid gateway token/password auth
+   * from an explicitly allowlisted origin, skipping manual device pairing.
+   * Requires gateway.controlUi.allowedOrigins to be explicitly configured
+   * (wildcards not supported). Only applies to operator-role sessions.
+   * Default: false.
+   */
+  trustTokenAuth?: boolean;
 };
 
 export type GatewayAuthMode = "none" | "token" | "password" | "trusted-proxy";

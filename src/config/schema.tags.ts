@@ -53,6 +53,7 @@ const TAG_OVERRIDES: Record<string, ConfigTag[]> = {
     "advanced",
   ],
   "gateway.controlUi.dangerouslyDisableDeviceAuth": ["security", "access", "network", "advanced"],
+  "gateway.controlUi.trustTokenAuth": ["security", "access", "network", "advanced"],
   "gateway.controlUi.allowInsecureAuth": ["security", "access", "network", "advanced"],
   "gateway.nodes.pairing.autoApproveCidrs": ["security", "access", "network", "advanced"],
   "proxy.tls.caFile": ["security", "network", "storage", "advanced"],
