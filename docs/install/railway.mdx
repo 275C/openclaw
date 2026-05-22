@@ -63,16 +63,18 @@ Set these variables on the service:
 
 - `OPENCLAW_GATEWAY_PORT=8080` (required — must match the port in Public Networking)
 - `OPENCLAW_GATEWAY_TOKEN` (required; treat as an admin secret)
+- `OPENROUTER_API_KEY` (required for chat — your [OpenRouter](https://openrouter.ai/) API key)
 - `OPENCLAW_STATE_DIR=/data/.openclaw` (recommended)
 - `OPENCLAW_WORKSPACE_DIR=/data/workspace` (recommended)
 - `OPENCLAW_CONFIG_PATH=/app/deploy/railway/openclaw.json`
 
 <Tip>
-  The bundled config at `deploy/railway/openclaw.json` sets `gateway.controlUi.allowedOrigins`,
-  `gateway.controlUi.trustTokenAuth: true`, and `gateway.trustedProxies` for the default Railway
-  domain. With `trustTokenAuth`, the Control UI skips manual device pairing when the gateway
-  token/password is provided — no CLI approval needed. If you use a custom domain, edit that file or
-  create your own config with the correct origin.
+  The bundled config at `deploy/railway/openclaw.json` sets `agents.defaults.model.primary` to
+  `openrouter/auto` so agents use OpenRouter by default, `gateway.controlUi.trustTokenAuth: true` to
+  skip manual device pairing when the gateway token/password is provided, and
+  `gateway.trustedProxies` for the Railway network. Set `OPENROUTER_API_KEY` in your Railway service
+  variables. If you use a custom domain, edit that file or create your own config with the correct
+  origin.
 </Tip>
 
 ## Connect a channel

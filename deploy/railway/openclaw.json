@@ -1,5 +1,15 @@
 {
   "$schema": "https://docs.openclaw.ai/schema/openclaw.json",
+  "env": {
+    "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}"
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openrouter/auto"
+      }
+    }
+  },
   "gateway": {
     "controlUi": {
       "allowedOrigins": [
