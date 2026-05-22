@@ -6,6 +6,7 @@ export type ControlUiAuthPolicy = {
   isControlUi: boolean;
   allowInsecureAuthConfigured: boolean;
   dangerouslyDisableDeviceAuth: boolean;
+  trustTokenAuth: boolean;
   allowBypass: boolean;
   device: ConnectParams["device"] | null | undefined;
 };
@@ -16,6 +17,7 @@ export function resolveControlUiAuthPolicy(params: {
     | {
         allowInsecureAuth?: boolean;
         dangerouslyDisableDeviceAuth?: boolean;
+        trustTokenAuth?: boolean;
       }
     | undefined;
   deviceRaw: ConnectParams["device"] | null | undefined;
@@ -24,10 +26,12 @@ export function resolveControlUiAuthPolicy(params: {
     params.isControlUi && params.controlUiConfig?.allowInsecureAuth === true;
   const dangerouslyDisableDeviceAuth =
     params.isControlUi && params.controlUiConfig?.dangerouslyDisableDeviceAuth === true;
+  const trustTokenAuth = params.isControlUi && params.controlUiConfig?.trustTokenAuth === true;
   return {
     isControlUi: params.isControlUi,
     allowInsecureAuthConfigured,
     dangerouslyDisableDeviceAuth,
+    trustTokenAuth,
     // `allowInsecureAuth` must not bypass secure-context/device-auth requirements.
     allowBypass: dangerouslyDisableDeviceAuth,
     device: dangerouslyDisableDeviceAuth ? null : params.deviceRaw,
@@ -57,7 +61,22 @@ export function shouldSkipControlUiPairing(
   // dangerouslyDisableDeviceAuth is the break-glass path for Control UI
   // operators. Keep pairing aligned with the missing-device bypass, including
   // open-auth deployments where there is no shared token/password to prove.
-  return role === "operator" && policy.allowBypass;
+  if (role === "operator" && policy.allowBypass) {
+    return true;
+  }
+  // trustTokenAuth: when enabled, Control UI operator sessions with valid
+  // token/password auth from an explicitly allowlisted origin skip pairing.
+  // Origin validation (via allowedOrigins) is enforced separately at connection
+  // time; this flag only controls whether valid auth skips the pairing step.
+  if (
+    policy.isControlUi &&
+    role === "operator" &&
+    policy.trustTokenAuth &&
+    (authMode === "token" || authMode === "password")
+  ) {
+    return true;
+  }
+  return false;
 }
 
 export function isTrustedProxyControlUiOperatorAuth(params: {
@@ -123,6 +142,17 @@ export function evaluateMissingDeviceIdentity(params: {
     // sessions only; node-role sessions must still satisfy device identity so
     // that the break-glass flag cannot be abused to admit device-less node
     // registrations (see #45405 review).
+    return { kind: "allow" };
+  }
+  if (
+    params.isControlUi &&
+    params.controlUiAuthPolicy.trustTokenAuth &&
+    params.role === "operator" &&
+    params.sharedAuthOk
+  ) {
+    // trustTokenAuth: allow Control UI operator sessions with valid token/password
+    // auth from an explicitly allowlisted origin to skip device pairing. Origin
+    // validation is enforced separately via allowedOrigins at connection time.
     return { kind: "allow" };
   }
   if (params.localBackendSelfPairingOk && params.role === "operator") {
