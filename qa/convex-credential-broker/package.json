@@ -7,7 +7,7 @@
   "scripts": {
     "dashboard": "convex dashboard",
     "deploy": "convex deploy",
-    "dev": "convex dev"
+    "dev": "node init && convex dev"
   },
   "dependencies": {
     "convex": "1.35.1"
