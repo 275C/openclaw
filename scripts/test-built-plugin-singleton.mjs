@@ -5,6 +5,9 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { installProcessWarningFilter } from "./process-warning-filter.mjs";
 import { stageBundledPluginRuntime } from "./stage-bundled-plugin-runtime.mjs";
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 installProcessWarningFilter();
 
