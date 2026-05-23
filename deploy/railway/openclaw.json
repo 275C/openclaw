@@ -1,6 +1,7 @@
 {
   "$schema": "https://docs.openclaw.ai/schema/openclaw.json",
   "env": {
+    "GITHUB_TOKEN": "${GITHUB_TOKEN}",
     "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}"
   },
   "agents": {

@@ -67,6 +67,7 @@ Set these variables on the service:
 - `OPENCLAW_STATE_DIR=/data/.openclaw` (recommended)
 - `OPENCLAW_WORKSPACE_DIR=/data/workspace` (recommended)
 - `OPENCLAW_CONFIG_PATH=/app/deploy/railway/openclaw.json`
+- `GITHUB_TOKEN` (optional — needed for cloning private GitHub repos; use a fine-grained token scoped only to required repos; never paste it into chat; store only as a Railway service variable)
 
 <Tip>
   The bundled config at `deploy/railway/openclaw.json` pins `agents.defaults.model.primary` to
