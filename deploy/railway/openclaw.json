@@ -8,6 +8,11 @@
     "defaults": {
       "model": {
         "primary": "openrouter/auto"
+      },
+      "tools": {
+        "exec": {
+          "timeoutSec": 60
+        }
       }
     }
   },
