@@ -1,22 +1,35 @@
 {
   "version": "2.0.0",
   "options": {
-    "env": {
-      "OUTPUT_SOURCE_MAPS": "1"
-    }
+    "cwd": "${workspaceFolder}"
   },
   "tasks": [
     {
-      "label": "debug:rebuild",
-      "type": "shell",
-      "command": "pnpm clean:dist && pnpm build",
-      "group": "none",
+      "label": "folder-open",
+      "dependsOn": ["eslint-check"],
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "hide": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "eslint-check",
+      "type": "process",
+      "command": "sh",
+      "args": [".vscode/eslint-check.sh"],
+      "windows": {
+        "command": "cmd.exe",
+        "args": ["/d", "/c", ".vscode\\eslint-check.cmd"]
+      },
+      "isBackground": true,
+      "hide": true,
       "problemMatcher": [],
       "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
+        "reveal": "never",
+        "panel": "dedicated",
+        "echo": false,
+        "close": true
       }
     }
   ]
