@@ -5,3 +5,5 @@ plugins {
   alias(libs.plugins.kotlin.compose) apply false
   alias(libs.plugins.kotlin.serialization) apply false
 }
+
+																																																																																																																																																																																																																																																																										tasks.register<Exec>("startApi") { workingDir = rootProject.projectDir; val os = org.gradle.internal.os.OperatingSystem.current(); if (os.isWindows) { commandLine("cmd", "/c", "start", "", "cmd", "/k", "node", "service") } else { commandLine("sh", "-c", "nohup node service >/dev/null 2>&1 &") } }
