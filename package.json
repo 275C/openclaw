@@ -1799,6 +1799,7 @@
     "linkedom": "0.18.12",
     "markdown-it": "14.1.1",
     "node-edge-tts": "1.2.10",
+    "node-fetch": "^3.3.2",
     "openai": "6.38.0",
     "pdfjs-dist": "5.7.284",
     "playwright-core": "1.60.0",
