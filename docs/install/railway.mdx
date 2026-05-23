@@ -72,7 +72,6 @@ Set these variables on the service:
 <Tip>
   The bundled config at `deploy/railway/openclaw.json` pins `agents.defaults.model.primary` to
   `openrouter/auto` (best available model via OpenRouter),
-  `agents.defaults.tools.exec.timeoutSec: 60` (60-second timeout for exec commands to prevent hangs),
   `gateway.controlUi.trustTokenAuth: true` to skip manual device pairing when the gateway
   token/password is provided, and `gateway.trustedProxies` for the Railway network. Set
   `OPENROUTER_API_KEY` in your Railway service variables. If you use a custom domain, edit that file
