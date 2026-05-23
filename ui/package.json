@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite",
+    "dev": "node api.js && vite",
     "preview": "vite preview",
     "test": "vitest run --config vitest.config.ts"
   },
